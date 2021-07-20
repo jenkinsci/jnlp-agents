@@ -4,10 +4,10 @@
 #
 # GROUP can be overridden in the environment to root the docker images under
 # different registry namespace
-GROUP?=jenkins
-# PREFIX defaults to `jnlp-agent` and can be changed to compute different image
+GROUP?=jenkinsciinfra
+# PREFIX defaults to `inbound-agent` and can be changed to compute different image
 # names
-PREFIX?=jnlp-agent
+PREFIX?=inbound-agent
 # SUFFIX defaults to the directory name
 SUFFIX?=$(shell basename $(shell pwd))
 
@@ -20,7 +20,10 @@ ABS_ROOT_DIR=$(realpath $(ROOT_DIR))
 NAME=$(GROUP)/$(PREFIX)-$(SUFFIX)
 
 build:
+	cat Dockerfile.base-$(SUFFIX) > Dockerfile
+	cat $(ROOT_DIR)Dockerfile.common >> Dockerfile
 	docker build -t $(NAME) .
+	rm Dockerfile
 	mkdir -p $(shell dirname $(IMAGE_TAR))
 	docker save --output $(IMAGE_TAR) $(NAME)
 
